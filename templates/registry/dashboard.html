@@ -47,7 +47,35 @@ function showToast(m,t){
     setTimeout(function(){d.remove()},8000);
 }
 checkAll();setInterval(checkAll,60000);
-</script></body></html>
+</script>
+<div id='toast-container' style='position:fixed;top:20px;right:20px;z-index:9999;'></div>
+<script>
+function checkAll(){
+    fetch('/api/check-deadlines/').then(r=>r.json()).then(d=>{
+        if(d.warnings>0)showToast(d.warnings+' file(s) due tomorrow!','warning');
+        if(d.overdue>0)showToast(d.overdue+' overdue file(s) in system!','danger');
+    });
+    fetch('/notifications/').then(r=>r.text()).then(html=>{
+        var div=document.createElement('div');div.innerHTML=html;
+        var items=div.querySelectorAll('.notif-item');
+        if(items.length>0)showToast('You have notifications! Check your notifications page.','info');
+    });
+}
+function showToast(m,t){
+    var c={warning:'#ffc107',danger:'#dc3545',info:'#0dcaf0',success:'#198754'};
+    var d=document.createElement('div');
+    d.style.cssText='background:'+c[t]+';color:white;padding:15px 20px;margin-bottom:10px;border-radius:8px;box-shadow:0 5px 20px rgba(0,0,0,.3);animation:slideIn .5s;font-size:14px;cursor:pointer;max-width:400px';
+    d.innerHTML=m;d.onclick=function(){this.remove()};
+    document.getElementById('toast-container').appendChild(d);
+    setTimeout(function(){d.remove()},10000);
+}
+var style=document.createElement('style');
+style.textContent='@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}';
+document.head.appendChild(style);
+checkAll();setInterval(checkAll,60000);
+</script>
+</body></html>
+
 
 
 
