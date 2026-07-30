@@ -21,7 +21,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'crfts.urls'
 TEMPLATES = [{'BACKEND':'django.template.backends.django.DjangoTemplates','DIRS':[BASE_DIR/'templates'],'APP_DIRS':True,'OPTIONS':{'context_processors':['django.template.context_processors.debug','django.template.context_processors.request','django.contrib.auth.context_processors.auth','django.contrib.messages.context_processors.messages']}}]
 WSGI_APPLICATION = 'crfts.wsgi.application'
-DATABASES = {'default':{'ENGINE':'django.db.backends.sqlite3','NAME':BASE_DIR/'db.sqlite3'}}
+DATABASES = {'default':{'ENGINE':'django.db.backends.sqlite3','NAME': os.environ.get('DATABASE_PATH', BASE_DIR / 'db.sqlite3')}}
 AUTH_USER_MODEL = 'accounts.User'
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Africa/Nairobi'
@@ -36,3 +36,4 @@ SESSION_COOKIE_AGE = 900
 FILE_UPLOAD_MAX_MEMORY_SIZE = 26214400
 X_FRAME_OPTIONS = 'DENY'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
