@@ -213,14 +213,13 @@ def request_file(request):
         if from_emp_id:
             try:
                 to_user = User.objects.get(employee_id=from_emp_id)
-                Notification.objects.create(user=to_user, notification_type='FILE_REQUEST', message=f'File Request from {emp.name} ({emp.department.name}): {subject}', file=None)
+                Notification.objects.create(user=to_user, notification_type='FILE_REQUEST', message=f'FILE REQUEST from {emp.name} ({emp.department.name}): {subject}', file=None)
             except: pass
         else:
             dept_emps = Employee.objects.filter(department_id=from_dept_id, active=True)
             for e in dept_emps:
                 if hasattr(e, 'user') and e.user:
-                    Notification.objects.create(user=e.user, notification_type='FILE_REQUEST', message=f'File Request from {emp.name} ({emp.department.name}): {subject}', file=None)
-        Notification.objects.create(user=request.user, notification_type='REQUEST_SENT', message=f'File request sent: {subject}')
+                    Notification.objects.create(user=e.user, notification_type='FILE_REQUEST', message=f'FILE REQUEST from {emp.name} ({emp.department.name}): {subject}', file=None)
         return redirect('/files/')
     return render(request, 'registry/request_file.html', {'departments': depts, 'employees': emps, 'user': request.user, 'notif_count': get_notif_count(request.user)})
 
@@ -467,4 +466,5 @@ urlpatterns = [
     path('notifications/<int:pk>/read/', mark_notification_read, name='mark_read'),
     path('notifications/mark-all-read/', mark_all_read, name='mark_all_read'),
 ]
+
 
