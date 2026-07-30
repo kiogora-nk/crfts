@@ -3,3 +3,5 @@
 <body><div class='sidebar'><h5>ADMIN</h5><a href='/admin-panel/'>Dashboard</a><a href='/admin-panel/departments/' style='color:#fff'>Departments</a><a href='/logout/'>Logout</a></div>
 <div class='main'><h4>Departments</h4><div class='card mb-2'><form method='POST'>{% csrf_token %}<input name='code' placeholder='Code' class='form-control mb-1' required><input name='name' placeholder='Name' class='form-control mb-1' required><button class='btn btn-primary btn-sm'>Add</button></form></div>
 <div class='card'><table><tr><th>Code</th><th>Name</th></tr>{% for d in departments %}<tr><td>{{ d.code }}</td><td>{{ d.name }}</td></tr>{% endfor %}</table></div></div></body></html>
+
+

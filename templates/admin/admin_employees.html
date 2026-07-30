@@ -3,3 +3,5 @@
 <body><div class='sidebar'><h5>ADMIN</h5><a href='/admin-panel/'>Dashboard</a><a href='/admin-panel/employees/' style='color:#fff'>Employees</a><a href='/logout/'>Logout</a></div>
 <div class='main'><h4>Employees</h4><div class='card mb-2'><form method='POST'>{% csrf_token %}<input name='payroll' placeholder='Payroll' class='form-control mb-1' required><input name='name' placeholder='Name' class='form-control mb-1' required><select name='dept' class='form-select mb-1' required><option value=''>Dept</option>{% for d in departments %}<option value='{{ d.id }}'>{{ d.name }}</option>{% endfor %}</select><input name='email' placeholder='Email' class='form-control mb-1' required><button class='btn btn-primary btn-sm'>Add</button></form></div>
 <div class='card'><table><tr><th>Payroll</th><th>Name</th><th>Dept</th><th>Email</th></tr>{% for e in employees %}<tr><td>{{ e.payroll }}</td><td>{{ e.name }}</td><td>{{ e.department.name }}</td><td>{{ e.email }}</td></tr>{% endfor %}</table></div></div></body></html>
+
+

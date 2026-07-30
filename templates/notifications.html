@@ -12,3 +12,5 @@
 <div><strong>{{ n.notification_type }}</strong><br><small>{{ n.message }}</small><br><small class='text-muted'>{{ n.created_at|timesince }} ago</small></div>
 <div>{% if not n.is_read %}<a href='/notifications/{{ n.id }}/read/' class='btn btn-sm btn-outline-primary'>Mark Read</a>{% else %}<span class='badge bg-success'>Read</span>{% endif %}</div></div>
 {% empty %}<p class='text-center py-4 text-muted'><i class='fas fa-bell-slash fa-2x mb-2'></i><br>No notifications</p>{% endfor %}</div></main></body></html>
+
+

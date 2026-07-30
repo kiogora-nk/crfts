@@ -3,3 +3,5 @@
 <body><div class='sidebar'><h5>ADMIN</h5><a href='/admin-panel/'>Dashboard</a><a href='/admin-panel/users/' style='color:#fff'>Users</a><a href='/logout/'>Logout</a></div>
 <div class='main'><h4>User Accounts</h4><div class='card mb-2'><form method='POST'>{% csrf_token %}<select name='employee' class='form-select mb-1' required><option value=''>Select Employee</option>{% for e in employees %}<option value='{{ e.id }}'>{{ e.payroll }} - {{ e.name }}</option>{% endfor %}</select><select name='role' class='form-select mb-1' required><option value=''>Select Role</option>{% for r in roles %}<option value='{{ r.id }}'>{{ r.name }}</option>{% endfor %}</select><input name='password' type='password' placeholder='Password' class='form-control mb-1' required><button class='btn btn-primary btn-sm'>Create User</button></form></div>
 <div class='card'><table><tr><th>Payroll</th><th>Employee</th><th>Role</th><th>Active</th></tr>{% for u in users %}<tr><td>{{ u.payroll_number }}</td><td>{{ u.employee.name|default:'--' }}</td><td>{{ u.role.name|default:'--' }}</td><td>{{ u.is_active }}</td></tr>{% endfor %}</table></div></div></body></html>
+
+

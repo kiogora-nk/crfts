@@ -13,3 +13,5 @@
 <div class='card'><table><thead><tr><th>Payroll #</th><th>Name</th><th>Designation</th><th>Department</th><th>Email</th></tr></thead><tbody>
 {% for e in employees %}<tr><td><strong>{{ e.payroll }}</strong></td><td>{{ e.name }}</td><td>{{ e.designation|default:'--' }}</td><td>{{ e.department.name }}</td><td>{{ e.email }}</td></tr>
 {% empty %}<tr><td colspan='5' class='text-center py-3'>No employees found</td></tr>{% endfor %}</tbody></table></div></main></body></html>
+
+

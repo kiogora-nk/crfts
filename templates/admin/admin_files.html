@@ -4,3 +4,5 @@
 <div class='main'><h4>All Files</h4><form class='my-2'><input name='q' value='{{ q }}' class='form-control' placeholder='Search...'></form>
 <div class='card'><table><tr><th>File Number</th><th>Subject</th><th>Dept</th><th>Holder</th><th>Status</th></tr>
 {% for f in files %}<tr><td>{{ f.file_number }}</td><td>{{ f.subject|truncatechars:50 }}</td><td>{{ f.current_department.name }}</td><td>{{ f.current_holder.name|default:'--' }}</td><td>{{ f.status }}</td></tr>{% endfor %}</table></div></div></body></html>
+
+

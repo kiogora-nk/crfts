@@ -9,3 +9,5 @@
 <strong>{{ a.get_anomaly_type_display }}</strong> - {{ a.description }}<br><small>Risk Score: {{ a.risk_score|floatformat:2 }}</small></div>{% empty %}<p>No anomalies detected</p>{% endfor %}</div></div>
 <div class='col-md-6'><div class='card'><h5>Forensic Logs</h5>
 {% for log in logs %}<div class='mb-2 p-2 border-bottom'><small class='text-muted'>{{ log.created_at|date:'Y-m-d H:i' }}</small><br><strong>{{ log.event_type }}</strong>: {{ log.description }}</div>{% endfor %}</div></div></div></div></body></html>
+
+

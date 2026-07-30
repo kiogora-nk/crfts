@@ -20,3 +20,5 @@
 {% for f in recent_files %}<tr><td>{{ f.file_number }}</td><td>{{ f.subject|truncatechars:50 }}</td><td>{{ f.current_department.name }}</td><td>{{ f.current_holder.name|default:'--' }}</td><td>{{ f.status }}</td></tr>{% endfor %}</table></div>
 {% if anomalies %}<div class='card'><h5>Anomalies Detected</h5>
 {% for a in anomalies %}<div class='alert alert-{% if a.risk_score > 0.7 %}danger{% elif a.risk_score > 0.4 %}warning{% else %}info{% endif %}'>{{ a.description }} (Risk: {{ a.risk_score|floatformat:2 }})</div>{% endfor %}</div>{% endif %}</main></body></html>
+
+

@@ -7,3 +7,5 @@
 <div class='card'><table><thead><tr><th>File Number</th><th>Subject</th><th>Status</th><th>Department</th></tr></thead><tbody>
 {% for f in files %}<tr><td>{{ f.file_number }}</td><td>{{ f.subject }}</td><td>{{ f.status }}</td><td>{{ f.current_department.name }}</td></tr>
 {% empty %}<tr><td colspan='4' class='text-center'>No files on this date</td></tr>{% endfor %}</tbody></table></div></main></body></html>
+
+

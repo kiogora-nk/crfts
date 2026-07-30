@@ -12,3 +12,5 @@
 <div class='card'><table><thead><tr><th>Code</th><th>Name</th><th>Status</th></tr></thead><tbody>
 {% for d in departments %}<tr><td><strong>{{ d.code }}</strong></td><td>{{ d.name }}</td><td><span class='badge bg-{% if d.active %}success{% else %}danger{% endif %}'>{% if d.active %}Active{% else %}Inactive{% endif %}</span></td></tr>
 {% empty %}<tr><td colspan='3' class='text-center py-3'>No departments</td></tr>{% endfor %}</tbody></table></div></main></body></html>
+
+

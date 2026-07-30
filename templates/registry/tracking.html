@@ -11,3 +11,5 @@
 <div class='card'><h5 class='mb-3'>Movement Timeline</h5><div class='timeline'>
 {% for m in movements %}<div class='timeline-item'><div class='dot'></div><strong>{{ m.action }}</strong><br><small>{{ m.to_dept.name|default:'N/A' }}</small><br><small class='text-muted'>{{ m.remarks|default:'' }}</small><br><small class='text-muted'>{{ m.created_at|date:'Y-m-d H:i' }} by {{ m.performed_by.name|default:'System' }}</small></div>
 {% empty %}<p class='text-muted'>No movement history</p>{% endfor %}</div></div></main></body></html>
+
+

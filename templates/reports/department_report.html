@@ -5,3 +5,5 @@
 <main class='main'><h4 class='mb-3'><i class='fas fa-building text-primary me-2'></i>Department Report</h4>
 <div class='card'><table><thead><tr><th>Department</th><th>Total Files</th><th>Completed</th><th>Pending</th></tr></thead><tbody>
 {% for d in data %}<tr><td><strong>{{ d.name }}</strong></td><td>{{ d.total }}</td><td>{{ d.completed }}</td><td>{{ d.pending }}</td></tr>{% endfor %}</tbody></table></div></main></body></html>
+
+

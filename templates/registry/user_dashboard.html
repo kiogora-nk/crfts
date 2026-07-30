@@ -26,3 +26,5 @@
 <div class='card'><h5><i class='fas fa-building'></i> Department Files ({{ employee.department.name }})</h5><table><tr><th>File Number</th><th>Subject</th><th>Holder</th><th>Status</th></tr>
 {% for f in dept_files %}<tr><td><a href='/file/{{ f.id }}/'><b>{{ f.file_number }}</b></a></td><td>{{ f.subject|truncatechars:50 }}</td><td>{{ f.current_holder.name|default:'Unassigned' }}</td><td>{{ f.status }}</td></tr>
 {% empty %}<tr><td colspan='4'>No other department files</td></tr>{% endfor %}</table></div></main></body></html>
+
+
