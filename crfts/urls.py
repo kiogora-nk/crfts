@@ -88,7 +88,7 @@ def admin_dashboard(request):
     recent = File.objects.filter(is_archived=False).select_related('current_department','current_holder').order_by('-created_at')[:10]
     return render(request, 'registry/dashboard.html', {
         'total': total, 'completed': completed, 'pending': pending_transfers, 'overdue': overdue,
-        'files': recent, 'user': request.user, 'notif_count': get_notif_count(request.user)
+        'files': recent, 'user': request.user, 'notif_count': get_notif_count(request.user), 'recent_notifications': Notification.objects.all().order_by('-created_at')[:5]
     })
 
 @login_required(login_url='/login/')
@@ -467,3 +467,4 @@ urlpatterns = [
     path('notifications/<int:pk>/read/', mark_notification_read, name='mark_read'),
     path('notifications/mark-all-read/', mark_all_read, name='mark_all_read'),
 ]
+
