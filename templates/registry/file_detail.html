@@ -49,6 +49,7 @@
 <a href='/transfers/create/' class='btn-action bg-primary text-white'><i class='fas fa-exchange-alt me-1'></i> Transfer File</a>
 
 <a href='/file/{{ file.id }}/return/' class='btn-action bg-danger text-white'><i class='fas fa-undo me-1'></i> Return File with Report</a>
+<a href='/file/{{ file.id }}/delete/' class='btn-action bg-danger text-white' onclick="return confirm('Are you sure you want to delete this file?')"><i class='fas fa-trash me-1'></i> Delete File</a>
 
 
 
@@ -63,6 +64,7 @@
 {% if m.hold_days %}<small class='text-info'>Hold period: {{ m.hold_days }} days</small>{% endif %}
 </div>{% empty %}<p class='text-muted'>No movements recorded</p>{% endfor %}</div>
 </div></div></main></body></html>
+
 
 
 

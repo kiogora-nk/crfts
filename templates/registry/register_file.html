@@ -13,7 +13,14 @@
 <div class='card'><form method='POST' enctype='multipart/form-data'>{% csrf_token %}
 <label class='form-label required'>Subject</label><input name='subject' class='form-control' placeholder='Enter file subject' required>
 <label class='form-label'>Description</label><textarea name='description' class='form-control' rows='3' placeholder='Enter description'></textarea>
-<div class='row'><div class='col-md-6'><label class='form-label required'>Department</label><select name='dept' class='form-select' required><option value=''>Select Department</option>{% for d in departments %}<option value='{{ d.id }}'>{{ d.name }} ({{ d.code }})</option>{% endfor %}</select></div>
+<div class='row'><div class='col-md-6'><label class='form-label'><b>Category</b></label>
+<select name='category' class='form-select'>
+    <option value=''>Select Category</option>
+    {% for c in categories %}
+    <option value='{{ c.id }}'>{{ c.name }}</option>
+    {% endfor %}
+</select>
+<label class='form-label required'>Department</label><select name='dept' class='form-select' required><option value=''>Select Department</option>{% for d in departments %}<option value='{{ d.id }}'>{{ d.name }} ({{ d.code }})</option>{% endfor %}</select></div>
 <div class='col-md-6'><label class='form-label'>Category</label><select name='category' class='form-select'><option value=''>Select Category</option>{% for c in categories %}<option value='{{ c.id }}'>{{ c.name }}</option>{% endfor %}</select></div></div>
 <label class='form-label'>Priority</label><select name='priority' class='form-select'><option value='MEDIUM'>Medium</option><option value='LOW'>Low</option><option value='HIGH'>High</option><option value='URGENT'>Urgent</option></select>
 <label class='form-label'>Upload Document (Optional)</label>
@@ -23,6 +30,7 @@
 <div class='alert alert-info'><i class='fas fa-info-circle me-1'></i>File number auto-generates: <strong>CGM-DEPT-YYYY-XXXXXX</strong></div>
 <button type='submit' class='btn btn-primary btn-lg'><i class='fas fa-save me-1'></i>Register File</button>
 <a href='/' class='btn btn-secondary btn-lg ms-2'>Cancel</a></form></div></main></body></html>
+
 
 
 
