@@ -191,6 +191,56 @@ def download_document(request, pk, doc_id):
     return redirect(f'/file/{pk}/')
 
 @login_required(login_url='/login/')
+def delete_file(request, pk):
+    f = File.objects.get(id=pk)
+    emp = get_emp(request.user)
+    if f.created_by == emp or is_admin_user(request.user):
+        f.is_archived = True; f.status = 'ARCHIVED'; f.save()
+        FileMovement.objects.create(file=f, action='File Deleted/Archived', remarks=f'Deleted by {emp.name}', performed_by=emp)
+        AuditLog.objects.create(user=request.user, payroll=request.user.payroll_number, action='FILE_DELETED', module='Registry', details={'file_number': f.file_number})
+        return redirect('/files/')
+    return redirect(f'/file/{pk}/')
+
+@login_required(login_url='/login/')
+def request_file(request):
+    depts = Department.objects.filter(active=True)
+    emps = Employee.objects.filter(active=True).select_related('department')
+    if request.method == 'POST':
+        subject = request.POST.get('subject', '').strip()
+        from_dept_id = request.POST.get('from_dept')
+        from_emp_id = request.POST.get('from_emp') or None
+        emp = get_emp(request.user)
+        if from_emp_id:
+            try:
+                to_user = User.objects.get(employee_id=from_emp_id)
+                Notification.objects.create(user=to_user, notification_type='FILE_REQUEST', message=f'File Request from {emp.name} ({emp.department.name}): {subject}', file=None)
+            except: pass
+        else:
+            dept_emps = Employee.objects.filter(department_id=from_dept_id, active=True)
+            for e in dept_emps:
+                if hasattr(e, 'user') and e.user:
+                    Notification.objects.create(user=e.user, notification_type='FILE_REQUEST', message=f'File Request from {emp.name} ({emp.department.name}): {subject}', file=None)
+        Notification.objects.create(user=request.user, notification_type='REQUEST_SENT', message=f'File request sent: {subject}')
+        return redirect('/files/')
+    return render(request, 'registry/request_file.html', {'departments': depts, 'employees': emps, 'user': request.user, 'notif_count': get_notif_count(request.user)})
+
+@login_required(login_url='/login/')
+def admin_reset_password(request):
+    if not is_admin_user(request.user): return redirect('/')
+    msg = ''
+    if request.method == 'POST':
+        payroll = request.POST.get('payroll', '').strip()
+        new_password = request.POST.get('new_password', '').strip()
+        try:
+            u = User.objects.get(payroll_number=payroll)
+            u.set_password(new_password); u.save()
+            msg = f'Password for {payroll} has been reset to: {new_password}'
+            AuditLog.objects.create(user=request.user, payroll=request.user.payroll_number, action='PASSWORD_RESET', module='Admin', details={'reset_for': payroll})
+        except User.DoesNotExist:
+            msg = 'User not found'
+    return render(request, 'admin/admin_reset_password.html', {'msg': msg, 'user': request.user})
+
+@login_required(login_url='/login/')
 def transfer_list(request):
     emp = get_emp(request.user)
     if is_admin_user(request.user):
@@ -246,8 +296,7 @@ def receive_transfer(request, pk):
         t.status = 'RECEIVED'; t.received_at = timezone.now(); t.save()
         t.file.status = 'RECEIVED'
         emp = get_emp(request.user)
-        t.file.current_holder = emp
-        t.file.date_received = timezone.now()
+        t.file.current_holder = emp; t.file.date_received = timezone.now()
         t.file.hold_duration_days = hold_days
         t.file.expected_return_date = timezone.now() + timezone.timedelta(days=hold_days)
         t.file.save()
@@ -268,7 +317,6 @@ def return_file(request, pk):
         return_dept = last_move.from_dept if last_move else f.department
         f.status = 'RETURNED'; f.current_department = return_dept; f.current_holder = None; f.save()
         FileMovement.objects.create(file=f, from_dept=emp.department, to_dept=return_dept, action='File Returned', remarks=f'Returned by {emp.name} after {f.days_held} days', report=report if report else None, performed_by=emp)
-        AuditLog.objects.create(user=request.user, payroll=request.user.payroll_number, action='FILE_RETURNED', module='Registry', details={'file_number': f.file_number})
         dept_emps = Employee.objects.filter(department=return_dept, active=True)
         for e in dept_emps:
             if hasattr(e, 'user') and e.user:
@@ -278,18 +326,17 @@ def return_file(request, pk):
 
 @login_required(login_url='/login/')
 def check_deadlines(request):
-    today = timezone.now().date()
-    tomorrow = today + timezone.timedelta(days=1)
-    due_tomorrow = File.objects.filter(expected_return_date__date=tomorrow, status__in=['RECEIVED', 'UNDER_REVIEW'], is_archived=False)
+    today = timezone.now().date(); tomorrow = today + timezone.timedelta(days=1)
+    due_tomorrow = File.objects.filter(expected_return_date__date=tomorrow, status__in=['RECEIVED','UNDER_REVIEW'], is_archived=False)
     for f in due_tomorrow:
-        if f.current_holder and hasattr(f.current_holder, 'user') and f.current_holder.user:
-            Notification.objects.get_or_create(user=f.current_holder.user, file=f, notification_type='DEADLINE_WARNING', defaults={'message': f'File {f.file_number}: "{f.subject}" is due tomorrow!', 'is_read': False})
-    overdue_files = File.objects.filter(expected_return_date__date__lt=today, status__in=['RECEIVED', 'UNDER_REVIEW'], is_archived=False)
+        if f.current_holder and hasattr(f.current_holder,'user') and f.current_holder.user:
+            Notification.objects.get_or_create(user=f.current_holder.user, file=f, notification_type='DEADLINE_WARNING', defaults={'message':f'File {f.file_number}: "{f.subject}" is due tomorrow!','is_read':False})
+    overdue_files = File.objects.filter(expected_return_date__date__lt=today, status__in=['RECEIVED','UNDER_REVIEW'], is_archived=False)
     for f in overdue_files:
-        if f.current_holder and hasattr(f.current_holder, 'user') and f.current_holder.user:
+        if f.current_holder and hasattr(f.current_holder,'user') and f.current_holder.user:
             days_overdue = (today - f.expected_return_date.date()).days
-            Notification.objects.get_or_create(user=f.current_holder.user, file=f, notification_type='FILE_OVERDUE', defaults={'message': f'OVERDUE! File {f.file_number} is {days_overdue} days past deadline!', 'is_read': False})
-    return JsonResponse({'checked': True, 'warnings': due_tomorrow.count(), 'overdue': overdue_files.count()})
+            Notification.objects.get_or_create(user=f.current_holder.user, file=f, notification_type='FILE_OVERDUE', defaults={'message':f'OVERDUE! File {f.file_number} is {days_overdue} days past deadline!','is_read':False})
+    return JsonResponse({'checked':True,'warnings':due_tomorrow.count(),'overdue':overdue_files.count()})
 
 @login_required(login_url='/login/')
 def notifications_list(request):
@@ -388,15 +435,18 @@ urlpatterns = [
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
     path('password-reset/', password_reset, name='password_reset'),
+    path('admin-reset-password/', admin_reset_password, name='admin_reset_password'),
     path('', home_redirect, name='home'),
     path('my-dashboard/', user_dashboard, name='my_dashboard'),
     path('admin-dashboard/', admin_dashboard, name='admin_dashboard'),
     path('files/', file_list, name='files'),
     path('register/', register_file, name='register'),
+    path('request-file/', request_file, name='request_file'),
     path('file/<int:pk>/', file_detail, name='file_detail'),
     path('file/<int:pk>/tracking/', file_tracking, name='tracking'),
     path('file/<int:pk>/upload/', upload_document, name='upload'),
     path('file/<int:pk>/download/<int:doc_id>/', download_document, name='download'),
+    path('file/<int:pk>/delete/', delete_file, name='delete_file'),
     path('file/<int:pk>/return/', return_file, name='return_file'),
     path('transfers/', transfer_list, name='transfers'),
     path('transfers/create/', create_transfer, name='create_transfer'),
@@ -417,4 +467,3 @@ urlpatterns = [
     path('notifications/<int:pk>/read/', mark_notification_read, name='mark_read'),
     path('notifications/mark-all-read/', mark_all_read, name='mark_all_read'),
 ]
-

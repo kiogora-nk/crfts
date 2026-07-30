@@ -1,0 +1,12 @@
+﻿<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><title>Request File - Meru County</title>
+<link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'>
+<style>:root{--p:#1a237e;--s:240px}*{margin:0;padding:0}body{font-family:'Segoe UI',Arial;background:#f0f2f5;display:flex}.sidebar{width:var(--s);background:linear-gradient(180deg,#0d1b4a,#1a237e,#283593);color:#fff;padding:20px;position:fixed;height:100vh}.sidebar a{color:rgba(255,255,255,.8);display:block;padding:10px;text-decoration:none;font-size:13px}.main{margin-left:var(--s);flex:1;padding:25px}.card{background:#fff;padding:20px;border-radius:10px;max-width:600px}input,select,textarea{padding:10px;width:100%;border:2px solid #ddd;border-radius:8px;margin:5px 0 15px}button{background:var(--p);color:#fff;padding:12px 30px;border:none;border-radius:8px;cursor:pointer;font-weight:600}</style></head>
+<body><div class='sidebar'><h5>MERU</h5><a href='/'>Dashboard</a><a href='/files/'>Files</a><a href='/request-file/' style='color:#fff'>Request File</a><a href='/logout/'>Logout</a></div>
+<div class='main'><h4>Request File from Department/User</h4><div class='card'><form method='POST'>{% csrf_token %}
+<label>Subject/Description *</label><textarea name='subject' rows='3' placeholder='What file do you need?' required></textarea>
+<label>From Department *</label><select name='from_dept' required onchange='loadEmps()' id='deptSelect'><option value=''>Select Department</option>{% for d in departments %}<option value='{{ d.id }}'>{{ d.name }}</option>{% endfor %}</select>
+<label>From Specific Person (optional)</label><select name='from_emp' id='empSelect'><option value=''>Anyone in department</option></select>
+<button type='submit'>Send Request</button></form></div></div>
+<script>
+function loadEmps(){var d=document.getElementById('deptSelect').value;var s=document.getElementById('empSelect');s.innerHTML='<option value="">Anyone in department</option>';if(d){fetch('/api/dept-employees/'+d).then(r=>r.json()).then(data=>{data.forEach(e=>{s.innerHTML+='<option value='+e.id+'>'+e.name+' ('+e.payroll+')</option>'})})}}
+</script></body></html>
