@@ -417,3 +417,4 @@ urlpatterns = [
     path('notifications/<int:pk>/read/', mark_notification_read, name='mark_read'),
     path('notifications/mark-all-read/', mark_all_read, name='mark_all_read'),
 ]
+
