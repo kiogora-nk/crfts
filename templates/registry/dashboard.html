@@ -46,4 +46,31 @@ function showToast(m,t){
 }
 checkAdminNotifications();
 setInterval(checkAdminNotifications,120000);
-</script></body></html>
+</script><div id='toast-container'></div>
+<script>
+function checkAdminNotifications(){
+    fetch('/api/check-deadlines/').then(function(r){return r.json()}).then(function(d){
+        console.log('Deadlines checked:', d);
+        if(d.overdue > 0){
+            showToast('&#x1f6a8; '+d.overdue+' overdue file(s) in the system! <a href=\"/reports/overdue/\" style=\"color:white;text-decoration:underline\">View</a>','danger');
+        }
+        if(d.warnings > 0){
+            showToast('&#x26a0;&#xfe0f; '+d.warnings+' file(s) due tomorrow!','warning');
+        }
+    }).catch(function(e){console.log('Error checking deadlines:',e)});
+}
+function showToast(m,t){
+    var c={danger:'#dc3545',warning:'#ffc107',info:'#0dcaf0',success:'#198754'};
+    var d=document.createElement('div');
+    d.style.cssText='background:'+c[t]+';color:white;padding:15px 20px;margin-bottom:10px;border-radius:8px;box-shadow:0 5px 20px rgba(0,0,0,.3);animation:slideIn .5s;font-size:14px;cursor:pointer;max-width:400px';
+    d.innerHTML=m;
+    d.onclick=function(){this.remove()};
+    document.getElementById('toast-container').appendChild(d);
+    setTimeout(function(){d.remove()},12000);
+}
+// Check immediately and every 2 minutes
+checkAdminNotifications();
+setInterval(checkAdminNotifications, 120000);
+</script>
+</body></html>
+
