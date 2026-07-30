@@ -60,6 +60,20 @@ def logout_view(request):
     logout(request)
     return redirect('/login/')
 
+def password_reset(request):
+    msg = ''
+    if request.method == 'POST':
+        payroll = request.POST.get('payroll', '').strip()
+        try:
+            u = User.objects.get(payroll_number=payroll)
+            if u.employee and u.employee.email:
+                msg = f'Password reset link sent to {u.employee.email}. Contact ICT if you don\'t receive it.'
+            else:
+                msg = 'No email on file. Please contact ICT Department for password reset.'
+        except User.DoesNotExist:
+            msg = 'If this payroll exists, reset instructions have been sent.'
+    return render(request, 'accounts/password_reset.html', {'msg': msg})
+
 @login_required(login_url='/login/')
 def home_redirect(request):
     if is_admin_user(request.user): return admin_dashboard(request)
@@ -373,6 +387,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
+    path('password-reset/', password_reset, name='password_reset'),
     path('', home_redirect, name='home'),
     path('my-dashboard/', user_dashboard, name='my_dashboard'),
     path('admin-dashboard/', admin_dashboard, name='admin_dashboard'),
